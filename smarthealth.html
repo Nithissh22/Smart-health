@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Symptom Checker</title>
+<style>
+body {
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Changed the font */
+background-color: #000000; /* Black background */
+margin: 20px auto; padding: 20px; max-width: 600px; border-radius: 8px;
+box-shadow: 0 0 15px rgba(255,
+255, 255, 0.15);
+color: #ffffff; /* White text */ position: relative;
+}
+h1 {
+color: #ffffff; /* White text */ text-align: center;
+font-size: 2.5em; margin-bottom: 20px;
+}
+.form-group {
+margin-bottom: 15px; padding: 10px;
+background: #333333; /* Darker background for form groups */
+border-radius: 5px;
+border: 1px solid #555555; /* Darker border */
+display: flex;
+flex-direction: column;
+}
+ 
+.form-group label { font-weight: bold; margin-bottom: 5px;
+}
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select { padding: 8px;
+border: 1px solid #ccc; border-radius: 5px; font-size: 1em;
+width: 100%;
+background-color: #444444; /* Input fields background */
+color: #ffffff; /* Input fields text color */
+}
+.symptom { display: flex;
+align-items: center; margin-bottom: 10px; padding: 10px;
+background: #222222; /* Darker background for symptoms */
+border: 1px solid #555555; /* Darker border */
+border-radius: 5px; transition: background 0.3s,
+transform 0.3s;
+}
+.symptom:hover {
+background-color: #444444; /* Lighter hover effect */
+transform: scale(1.02);
+}
+.symptom input[type="checkbox"] { margin-left: 10px;
+cursor: pointer;
+}
+button {
+padding: 10px 15px; background-color: #28a745; color: white;
+ 
+border: none; cursor: pointer; width: 100%; font-size: 1.1em;
+border-radius: 5px; margin-top: 15px; position: relative; overflow: hidden;
+transition: background 0.3s, transform 0.2s; /* Transition for background and transform */
+}
+button:hover {
+background-color: #218838; transform: translateY(-3px); /*
+Lift effect on hover */
+}
+button:active {
+transform: translateY(1px); /* Press effect */
+}
+#diagnosis {
+margin-top: 20px; font-size: 1.2em; text-align: center;
+color: #ffffff; /* White text */ padding: 10px;
+background-color: #444444; /* Darker background for diagnosis */
+border-radius: 5px; animation: fadeIn 1s ease;
+}
+.reset {
+background-color: #dc3545; margin-top: 10px;
+}
+.reset:hover {
+background-color: #c82333; transform: translateY(-3px); /*
+Lift effect on hover */
+}
+.loading-bar { display: none;
+ 
+margin: 20px 0; height: 10px;
+background-color: #555555; /* Darker loading bar */
+border-radius: 5px; overflow: hidden;
+}
+.loading-progress { height: 100%;
+background-color: #28a745; width: 0;
+transition: width 2s;
+}
+.language-select { margin-top: 15px;
+}
+.feedback {
+margin-top: 20px; padding: 15px;
+background-color: #333333; /* Darker background for feedback */
+border-radius: 5px;
+box-shadow: 0 0 5px rgba(255,
+255, 255, 0.1);
+}
+.feedback textarea { width: 100%; padding: 10px;
+border: 1px solid #ccc; border-radius: 5px; resize: vertical;
+font-size: 1em;
+background-color: #444444; /* Textarea background */
+color: #ffffff; /* Textarea text color */
+}
+.feedback button { background-color: #007bff; border: none;
+color: white; padding: 10px; border-radius: 5px;
+ 
+cursor: pointer; width: 100%; margin-top: 10px;
+transition: background 0.3s, transform 0.2s; /* Transition for background and transform */
+}
+.feedback button:hover { background-color: #0056b3; transform: translateY(-3px); /*
+Lift effect on hover */
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes sparkle {
+0% { opacity: 0; transform: scale(1); }
+50% { opacity: 1; transform: scale(1.5); }
+100% { opacity: 0; transform: scale(1); }
+}
+.sparkle {
+position: absolute; top: 20%;
+left: 50%;
+transform: translate(-50%, -50%); font-size: 50px;
+color: #FFD700;
+animation: sparkle 1s infinite;
+ 
+}
+</style>
+</head>
+<body>
+<div class="sparkle">˙+x</div>
+<h1>Symptom Checker  ·⁄·˘´:×x⁄◆
+<div class="language-select">
+<label
+ 
+
+
+
+
+
+</h1>
+ 
+for="language">Language:</label>
+<select id="language">
+<option
+ 
+value="en">English</option>
+<option value="es">Spanish</option>
+<option value="fr">French</option>
+</select>
+</div>
+<form id="symptomForm">
+<div class="form-group">
+<label for="name">Name:</label>
+<input type="text" id="name" required>
+</div>
+<div class="form-group">
+<label for="age">Age:</label>
+<input type="number" id="age" required min="0">
+</div>
+<div class="form-group">
+<label for="gender">Gender:</label>
+<select id="gender" required>
+<option value="" disabled selected>Select Gender</option>
+<option value="male">Male
+</option>
+<option
+value="female">Female
+</option>
+<option value="other">Other
+/5/</option>
+</select>
+</div>
+<div class="form-group">
+<label for="weight">Weight (kg):</label>
+<input type="number" id="weight" required min="0">
+</div>
+<div class="form-group">
+<label for="temperature">Temperature
+ 
+(°F):</label>
+<input type="number" id="temperature" required min="80" max="110">
+</div>
+<h3>Select Symptoms:</h3>
+<div id="symptomList"></div>
+<button type="submit">Check Symptoms •˙Q</button>
+<button type="button" class="reset" id="resetButton">Reset
+⬛³–</button>
+</form>
+<div class="loading-bar" id="loadingBar">
+<div class="loading-progress" id="loadingProgress"></div>
+</div>
+<h2 id="diagnosis"></h2>
+<div class="feedback">
+<h3>Your Feedback ) ‘ • )¸</h3>
+<label for="feedbackText">How was your experience using the Symptom Checker?</label>
+<textarea id="feedbackText" rows="4" placeholder="Type your feedback here..."></textarea>
+<button id="submitFeedback">Submit Feedback
+✉</button>
+</div>
+<script>
+const symptomNames = [ "Fever 🌡", "Cough
+◆, Jçs➜",
+"Headache ••`.•˜◆", "Sore Throat •–v•◆", "Rash
+ *` ",
+"Shortness of Breath ", "Wheezing ‘J ", "Body Aches
+", "Nausea x◆•´•`·",
+"Runny Nose ç,Js➜ ◆", "Chest Pain
+5 ", "Diarrhea ‡ :",
+"Fatigue	", "Increased
+ 
+Thirst      ", "Blurred Vision 👁", "Vomiting ◆›<.¿."
+];
+const symptomDescriptions = [
+ 
+"Elevated body temperature.", "A dry or productive cough.", "Pain in the head region.", "Inflammation or irritation in the
+throat.",
+"Skin eruption or discoloration.", "Difficulty in breathing.", "Whistling or rattling sounds
+when breathing.",
+"Generalized pain in the body.", "Feeling like you need to vomit.", "Excess mucus production.", "Pain or discomfort in the chest
+ 
+area.",
+ 
+
+"Loose or watery stools.", "Feeling unusually tired or
+ 
+sleepy.",
+"Persistent desire to drink fluids.", "Difficulty in seeing clearly.", "Forceful expulsion of stomach
+contents."
+];
+
+function renderSymptoms() { const symptomList =
+document.getElementById('symptomList'
+);
+
+symptomNames.forEach((symptom, index) => {
+const symptomDiv = document.createElement('div');
+symptomDiv.className = 'symptom';
+symptomDiv.innerHTML = `
+<label>
+<input type="checkbox" value="${symptom}"> ${symptom}
+</label>
+<div class="description">${symptomDescripti ons[index]}</div>
+`;
+ 
+symptomList.appendChild(symptomDiv)
+;
+});
+}
+
+document.getElementById('symptomFor m').addEventListener('submit', function(event) {
+event.preventDefault(); const loadingBar =
+document.getElementById('loadingBar'); const loadingProgress =
+document.getElementById('loadingProgr ess');
+ 
+
+
+'0%';
+ 
+loadingBar.style.display = 'block'; loadingProgress.style.width =
+ 
+
+ 
+
+
+'100%';
+
+
+'none';
+ 
+setTimeout(() => { loadingProgress.style.width =
+
+setTimeout(() => { loadingBar.style.display =
+
+const name =
+ 
+document.getElementById('name').value;
+const selectedSymptoms = Array.from(document.querySelectorAll('i nput[type="checkbox"]:checked'))
+.map(checkbox => checkbox.value);
+const diagnosis = selectedSymptoms.length > 0 ?
+`Hello ${name}, based on your symptoms:
+${selectedSymptoms.join(', ')}, we recommend consulting a healthcare professional.` :
+Hello ${name}, no symptoms were selected. Please choose your symptoms.;
+ 
+document.getElementById('diagnosis').in nerText = diagnosis;
+}, 500);
+}, 1000);
+});
+
+document.getElementById('resetButton'). addEventListener('click', function() {
+
+document.getElementById('symptomFor m').reset();
+
+document.getElementById('diagnosis').in nerText = '';
+
+document.getElementById('loadingBar'). style.display = 'none';
+
+document.getElementById('loadingProgr ess').style.width = '0%';
+});
+
+document.getElementById('submitFeedb ack').addEventListener('click', function()
+{
+const feedbackText = document.getElementById('feedbackText ').value;
+alert(`Feedback submitted:
+${feedbackText}`);
+
+document.getElementById('feedbackText ').value = '';
+});
+
+renderSymptoms();
+</script>
+</body>
+</html>
